@@ -6,11 +6,19 @@ import win32gui
 import win32process
 import win32api
 import win32con
+from pathlib import Path
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import threading
 
-OBS_CLIPS_DIR = r"CLIPS_FOLDER_HERE" # add your clips folder here e.g.: C:\Users\you\OBS\
+
+OBS_CLIPS_DIR = str(Path.home() / "Videos" / "OBS Clips") 
+# Change "OBS Clips" to your OBS output folder
+# if it's in another dir than "Videos", also change it
+# e.g.: str(Path.home() / "OBS") or str(Path.home() / "Videos" / "OBS")
+#
+# WARNING: if you don't set the correct directory it will return a error
+# the software needs to watch the directory to do it's action.
 
 last_fullscreen_app = "Desktop"  # Default if nothing is detected
 
