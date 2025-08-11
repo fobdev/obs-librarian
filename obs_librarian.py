@@ -3,12 +3,15 @@ import sys
 import time
 import shutil
 import configparser
+import ctypes
+from ctypes import wintypes
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-import ctypes
+import win32gui
+import win32process
+import psutil
 
 def show_message_box(title, text):
-    # MessageBoxW from user32.dll; MB_OK = 0
     ctypes.windll.user32.MessageBoxW(0, text, title, 0)
 
 def get_current_dir():
@@ -17,7 +20,7 @@ def get_current_dir():
     else:
         return os.path.dirname(os.path.abspath(__file__))
 
-# Load config.ini from same folder as script/exe
+# Load config.ini from the same folder as this script/exe
 config_path = os.path.join(get_current_dir(), "config.ini")
 config = configparser.ConfigParser()
 config.read(config_path)
@@ -32,10 +35,33 @@ if not os.path.isdir(OBS_CLIPS_DIR):
     show_message_box("Invalid Path", f"The configured OBS clips directory does not exist:\n{OBS_CLIPS_DIR}")
     sys.exit(1)
 
-# Placeholder for your fullscreen detection, adjust as needed
-def get_fullscreen_window_process_name():
-    # TODO: implement your fullscreen/windowed detection logic here
+def is_fullscreen(hwnd):
+    if not hwnd:
+        return False
+    rect = win32gui.GetWindowRect(hwnd)
+    # Get screen size
+    screen_width = ctypes.windll.user32.GetSystemMetrics(0)
+    screen_height = ctypes.windll.user32.GetSystemMetrics(1)
+    left, top, right, bottom = rect
+    width = right - left
+    height = bottom - top
+    tolerance = 10  # pixels tolerance for borders
+    return width >= screen_width - tolerance and height >= screen_height - tolerance
+
+def get_active_window_title():
+    hwnd = win32gui.GetForegroundWindow()
+    if hwnd and is_fullscreen(hwnd):
+        title = win32gui.GetWindowText(hwnd)
+        if title:
+            return title
     return None
+
+def sanitize_folder_name(name: str) -> str:
+    # Remove characters not allowed in Windows folder names
+    invalid_chars = '<>:"/\\|?*'
+    for ch in invalid_chars:
+        name = name.replace(ch, '')
+    return name.strip() or "Unknown"
 
 class ClipHandler(FileSystemEventHandler):
     def on_created(self, event):
@@ -46,10 +72,11 @@ class ClipHandler(FileSystemEventHandler):
         # Wait to ensure file is fully written
         time.sleep(1)
 
-        game_process = get_fullscreen_window_process_name()
-        target_folder = os.path.join(OBS_CLIPS_DIR, game_process if game_process else "Desktop")
-        if not os.path.exists(target_folder):
-            os.makedirs(target_folder)
+        window_title = get_active_window_title()
+        folder_name = sanitize_folder_name(window_title) if window_title else "Desktop"
+
+        target_folder = os.path.join(OBS_CLIPS_DIR, folder_name)
+        os.makedirs(target_folder, exist_ok=True)
         try:
             shutil.move(filepath, target_folder)
             print(f"Moved {filepath} to {target_folder}")
