@@ -6,30 +6,35 @@ import configparser
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import ctypes
-from ctypes import wintypes
 
-# Get folder where this script or exe lives
+def show_message_box(title, text):
+    # MessageBoxW from user32.dll; MB_OK = 0
+    ctypes.windll.user32.MessageBoxW(0, text, title, 0)
+
 def get_current_dir():
     if getattr(sys, 'frozen', False):
         return os.path.dirname(sys.executable)
     else:
         return os.path.dirname(os.path.abspath(__file__))
 
-# Load config.ini from the same folder as the exe/script
+# Load config.ini from same folder as script/exe
 config_path = os.path.join(get_current_dir(), "config.ini")
 config = configparser.ConfigParser()
 config.read(config_path)
 
-OBS_CLIPS_DIR = config.get("Settings", "OBS_CLIPS_DIR", fallback=None)
-if not OBS_CLIPS_DIR or not os.path.isdir(OBS_CLIPS_DIR):
-    print(f"Error: OBS_CLIPS_DIR is not set or does not exist: {OBS_CLIPS_DIR}")
+OBS_CLIPS_DIR = config.get("Settings", "OBS_CLIPS_DIR", fallback="").strip()
+
+if not OBS_CLIPS_DIR:
+    show_message_box("Configuration Missing", "Configuration not found or OBS_CLIPS_DIR is empty.\nPlease run the installer first.")
     sys.exit(1)
 
-user32 = ctypes.WinDLL('user32', use_last_error=True)
+if not os.path.isdir(OBS_CLIPS_DIR):
+    show_message_box("Invalid Path", f"The configured OBS clips directory does not exist:\n{OBS_CLIPS_DIR}")
+    sys.exit(1)
 
-# Your fullscreen/windowed fullscreen detection (replace with your real logic)
+# Placeholder for your fullscreen detection, adjust as needed
 def get_fullscreen_window_process_name():
-    # TODO: Implement actual detection and return process name string
+    # TODO: implement your fullscreen/windowed detection logic here
     return None
 
 class ClipHandler(FileSystemEventHandler):
@@ -38,7 +43,7 @@ class ClipHandler(FileSystemEventHandler):
             return
         filepath = event.src_path
 
-        # Wait a bit to ensure OBS finished writing the clip file
+        # Wait to ensure file is fully written
         time.sleep(1)
 
         game_process = get_fullscreen_window_process_name()
