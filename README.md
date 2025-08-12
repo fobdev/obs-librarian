@@ -11,8 +11,6 @@ Tired of your AMD or NVIDIA clipping software to stop working or being bugged? O
 
 ### How to set OBS to clip like GeForce Experience and Radeon ReLive
 
-#### Alternatively, you can just [run this script](https://github.com/fobdev/obs-librarian/releases/download/first/schedule_obs.ps1) with PowerShell as Administrator, and it will create the task for you automatically.
-
 #### 1 - Open your OBS Settings
 ![Image 1](https://raw.githubusercontent.com/fobdev/obs-librarian/refs/heads/main/readme-images/1.png)
 #### 2 - (important) Configure the output path and set the recording quality, recording format and video encoder to Hardware encoding if possible.
