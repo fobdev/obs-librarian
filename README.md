@@ -36,6 +36,7 @@ Tired of your AMD or NVIDIA clipping software to stop working or being bugged? O
 #### Select your OBS folder with the software and set the arguments
 Normally, the OBS directory is "C:\Program Files\obs-studio\bin\64bit\obs64.exe"
 #### Arguments: **--disable-shutdown-check --startreplaybuffer --minimize-to-tray**
+#### Important: Set the "Start in:" to the OBS directory, otherwise it will fail to open (C:\Program Files\obs-studio\bin\64bit\)
 ![Image 2](https://raw.githubusercontent.com/fobdev/obs-librarian/refs/heads/main/readme-images/9.png)
 #### Click next, and then finish.
 Now everything is set up and your OBS will start the replay buffer everytime you start your computer.
