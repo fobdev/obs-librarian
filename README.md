@@ -1,7 +1,7 @@
 # Use OBS for clips + Folder Librarian
 
 **TLDR: Downloads**
-- [Folder Organizer (obs-librarian)](https://github.com/fobdev/obs-librarian/releases/download/stable/obs_librarian.zip)
+- [Organize clips by game folder (obs-librarian)](https://github.com/fobdev/obs-librarian/releases/download/stable/obs_librarian.zip)
 - [Automatic OBS Clip Scheduler](https://github.com/fobdev/obs-librarian/releases/download/stable/-obs_scheduler.exe)
 - Remember to create a bind for your clips in OBS>Settings>Hotkeys>Save Replay
 
@@ -41,6 +41,7 @@ Normally, the OBS directory is "C:\Program Files\obs-studio\bin\64bit\obs64.exe"
 ![Image 2](https://raw.githubusercontent.com/fobdev/obs-librarian/refs/heads/main/readme-images/9.png)
 #### Click next, and then finish.
 Now everything is set up and your OBS will start the replay buffer everytime you start your computer.
+
 
 
 
