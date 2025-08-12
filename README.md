@@ -4,7 +4,7 @@
 I created a script that can sort your videos by fullscreen/borderless software, so your videos folder will look just like in Radeon ReLive or GeForce Experience.
 **you just need to run the installer**
 
-### Check the releases page or click here to [download](https://github.com/fobdev/obs-librarian/releases/download/first/obs_librarian.zip) 
+### Check the releases page or click here to [download](https://github.com/fobdev/obs-librarian/releases/download/stable/obs_librarian.zip) 
 
 # Using OBS as a Clips software: Guide
 Tired of your AMD or NVIDIA clipping software to stop working or being bugged? OBS is the best software for recording your screen and you can configure it to create clips the same way as NVIDIA and AMD! **you can even use obs_librarian to sort it by folder!**
@@ -33,6 +33,7 @@ Normally, the OBS directory is "C:\Program Files\obs-studio\bin\64bit\obs64.exe"
 ![Image 2](https://raw.githubusercontent.com/fobdev/obs-librarian/refs/heads/main/readme-images/9.png)
 #### Click next, and then finish.
 Now everything is set up and your OBS will start the replay buffer everytime you start your computer.
+
 
 
 
