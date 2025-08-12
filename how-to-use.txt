@@ -1,0 +1,13 @@
+How to use:
+1 - Run "librarian installer.exe"
+2 - Select OBS Installation folder
+3 - Select the time that you want the program to wait until it move the files
+(if your clips are large, it may take a while. If they look corruped, increase this time)
+4 - Install
+
+IF YOU DIDNT CONFIGURED YOUR OBS TO DO CLIPS YET:
+
+1 - run "make obs do clips.exe"
+2 - Select OBS Installation folder
+3 - Click create schedule then restart your computer, OBS will open with clips enabled
+  - Remember to create a keybind for your clips in OBS>Settings>Keybinds>Save Replay
