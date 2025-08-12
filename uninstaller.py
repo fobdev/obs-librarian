@@ -13,25 +13,39 @@ def kill_process_by_name(name="obs_librarian.exe"):
                 print(f"Could not terminate {name}: {e}")
 
 def uninstall():
-    startup_folder = os.path.join(os.getenv("APPDATA"), r"Microsoft\Windows\Start Menu\Programs\Startup")
-    files_to_remove = ["obs_librarian.exe", "config.ini"]
-    removed_any = False
+    startup_folder = os.path.join(
+        os.getenv("APPDATA"),
+        r"Microsoft\Windows\Start Menu\Programs\Startup"
+    )
+    user_profile_dir = os.getenv("USERPROFILE")
+
+    exe_path = os.path.join(startup_folder, "obs_librarian.exe")
+    config_path = os.path.join(user_profile_dir, "librarian-config.ini")
 
     kill_process_by_name("obs_librarian.exe")
 
-    for filename in files_to_remove:
-        path = os.path.join(startup_folder, filename)
-        if os.path.exists(path):
-            try:
-                os.remove(path)
-                removed_any = True
-            except Exception as e:
-                messagebox.showwarning("Warning", f"Could not delete {filename}: {e}")
+    removed_any = False
+
+    # Remove exe from Startup
+    if os.path.exists(exe_path):
+        try:
+            os.remove(exe_path)
+            removed_any = True
+        except Exception as e:
+            messagebox.showwarning("Warning", f"Could not delete obs_librarian.exe: {e}")
+
+    # Remove librarian-config.ini from user profile
+    if os.path.exists(config_path):
+        try:
+            os.remove(config_path)
+            removed_any = True
+        except Exception as e:
+            messagebox.showwarning("Warning", f"Could not delete librarian-config.ini: {e}")
 
     if removed_any:
-        messagebox.showinfo("Uninstaller", "Uninstallation complete! Watcher files removed from startup folder.")
+        messagebox.showinfo("Uninstaller", "Uninstallation complete! Watcher exe and librarian-config.ini removed.")
     else:
-        messagebox.showinfo("Uninstaller", "No watcher files found in startup folder.")
+        messagebox.showinfo("Uninstaller", "No watcher files found.")
 
     root.destroy()
 

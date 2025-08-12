@@ -40,29 +40,34 @@ def install():
 
     current_dir = get_current_dir()
     watcher_exe = os.path.join(current_dir, "obs_librarian.exe")
-    config_path = os.path.join(current_dir, "config.ini")
+
+    # Config path will now be in the user profile folder
+    user_profile_dir = os.getenv("USERPROFILE")
+    config_path = os.path.join(user_profile_dir, "librarian-config.ini")
 
     if not os.path.exists(watcher_exe):
         messagebox.showerror("Error", "obs_librarian.exe not found in installer folder.")
         return
 
     try:
-        # Write config.ini with the user's OBS clips folder path
+        # Write librarian-config.ini with the user's OBS clips folder path
         config = configparser.ConfigParser()
         config["Settings"] = {"OBS_CLIPS_DIR": obs_folder}
         with open(config_path, "w") as configfile:
             config.write(configfile)
 
-        # Copy watcher exe and config.ini only to startup folder (not to obs_folder)
-        startup_folder = os.path.join(os.getenv("APPDATA"), r"Microsoft\Windows\Start Menu\Programs\Startup")
+        # Copy watcher exe to startup folder
+        startup_folder = os.path.join(
+            os.getenv("APPDATA"),
+            r"Microsoft\Windows\Start Menu\Programs\Startup"
+        )
         shutil.copy(watcher_exe, startup_folder)
-        shutil.copy(config_path, startup_folder)
 
         time.sleep(0.5)  # wait a moment for copies to complete
 
-        # Verify config.ini is in startup folder
-        if not os.path.exists(os.path.join(startup_folder, "config.ini")):
-            messagebox.showerror("Error", "config.ini not found in startup folder after copying!")
+        # Verify librarian-config.ini exists in the user profile folder
+        if not os.path.exists(config_path):
+            messagebox.showerror("Error", "librarian-config.ini not found in user profile folder after copying!")
             return
 
         if run_now.get():

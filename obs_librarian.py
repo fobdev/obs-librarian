@@ -20,19 +20,25 @@ def get_current_dir():
     else:
         return os.path.dirname(os.path.abspath(__file__))
 
-# Load config.ini from the same folder as this script/exe
-config_path = os.path.join(get_current_dir(), "config.ini")
+# Load config.ini from the user profile folder
+config_path = os.path.join(os.getenv("USERPROFILE"), "librarian-config.ini")
 config = configparser.ConfigParser()
 config.read(config_path)
 
 OBS_CLIPS_DIR = config.get("Settings", "OBS_CLIPS_DIR", fallback="").strip()
 
 if not OBS_CLIPS_DIR:
-    show_message_box("Configuration Missing", "Configuration not found or OBS_CLIPS_DIR is empty.\nPlease run the installer first.")
+    show_message_box(
+        "Configuration Missing",
+        "Configuration not found or OBS_CLIPS_DIR is empty.\nPlease run the installer first."
+    )
     sys.exit(1)
 
 if not os.path.isdir(OBS_CLIPS_DIR):
-    show_message_box("Invalid Path", f"The configured OBS clips directory does not exist:\n{OBS_CLIPS_DIR}")
+    show_message_box(
+        "Invalid Path",
+        f"The configured OBS clips directory does not exist:\n{OBS_CLIPS_DIR}"
+    )
     sys.exit(1)
 
 def is_fullscreen(hwnd):
@@ -70,7 +76,7 @@ class ClipHandler(FileSystemEventHandler):
         filepath = event.src_path
 
         # Wait to ensure file is fully written
-        time.sleep(1)
+        time.sleep(5)
 
         window_title = get_active_window_title()
         folder_name = sanitize_folder_name(window_title) if window_title else "Desktop"
@@ -91,7 +97,7 @@ if __name__ == "__main__":
     print(f"Watching {OBS_CLIPS_DIR} for new clips...")
     try:
         while True:
-            time.sleep(1)
+            time.sleep(5)
     except KeyboardInterrupt:
         observer.stop()
     observer.join()
