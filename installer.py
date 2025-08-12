@@ -31,17 +31,27 @@ def select_folder():
 
 def install():
     obs_folder = folder_var.get()
+    seconds = seconds_var.get()
+
     if not obs_folder:
         messagebox.showerror("Error", "Please select your OBS Clips folder.")
         return
     if not os.path.isdir(obs_folder):
         messagebox.showerror("Error", "The folder path entered does not exist. Please enter a valid folder.")
         return
+    
+    # Validate seconds input
+    try:
+        seconds_int = int(seconds)
+        if seconds_int <= 0:
+            raise ValueError
+    except ValueError:
+        messagebox.showerror("Error", "Please enter a valid positive integer for seconds.")
+        return
 
     current_dir = get_current_dir()
     watcher_exe = os.path.join(current_dir, "obs_librarian.exe")
 
-    # Config path will now be in the user profile folder
     user_profile_dir = os.getenv("USERPROFILE")
     config_path = os.path.join(user_profile_dir, "librarian-config.ini")
 
@@ -50,13 +60,14 @@ def install():
         return
 
     try:
-        # Write librarian-config.ini with the user's OBS clips folder path
         config = configparser.ConfigParser()
-        config["Settings"] = {"OBS_CLIPS_DIR": obs_folder}
+        config["Settings"] = {
+            "OBS_CLIPS_DIR": obs_folder,
+            "seconds": str(seconds_int)
+        }
         with open(config_path, "w") as configfile:
             config.write(configfile)
 
-        # Copy watcher exe to startup folder
         startup_folder = os.path.join(
             os.getenv("APPDATA"),
             r"Microsoft\Windows\Start Menu\Programs\Startup"
@@ -65,7 +76,6 @@ def install():
 
         time.sleep(0.5)  # wait a moment for copies to complete
 
-        # Verify librarian-config.ini exists in the user profile folder
         if not os.path.exists(config_path):
             messagebox.showerror("Error", "librarian-config.ini not found in user profile folder after copying!")
             return
@@ -85,11 +95,12 @@ check_already_installed()
 # --- Main installer window ---
 root = tk.Tk()
 root.title("OBS Librarian Installer")
-root.geometry("450x200")
+root.geometry("450x240")
 root.resizable(False, False)
 root.eval('tk::PlaceWindow . center')
 
 folder_var = tk.StringVar()
+seconds_var = tk.StringVar(value="5")  # Default seconds value
 
 tk.Label(root, text="Select your OBS Clips folder:").pack(pady=10)
 
@@ -98,6 +109,9 @@ frame.pack()
 
 tk.Entry(frame, textvariable=folder_var, width=40).pack(side=tk.LEFT)
 tk.Button(frame, text="Browse", command=select_folder).pack(side=tk.LEFT, padx=5)
+
+tk.Label(root, text="Seconds to wait before moving (default 5):").pack(pady=(10, 0))
+tk.Entry(root, textvariable=seconds_var, width=10).pack()
 
 run_now = tk.BooleanVar(value=True)
 tk.Checkbutton(root, text="Run obs_librarian after install", variable=run_now).pack(anchor="w", padx=20, pady=10)

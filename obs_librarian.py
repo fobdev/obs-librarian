@@ -26,6 +26,14 @@ config = configparser.ConfigParser()
 config.read(config_path)
 
 OBS_CLIPS_DIR = config.get("Settings", "OBS_CLIPS_DIR", fallback="").strip()
+seconds_str = config.get("Settings", "seconds", fallback="5").strip()
+
+try:
+    seconds = int(seconds_str)
+    if seconds <= 0:
+        raise ValueError
+except ValueError:
+    seconds = 5  # fallback to 5 seconds if invalid
 
 if not OBS_CLIPS_DIR:
     show_message_box(
@@ -75,8 +83,8 @@ class ClipHandler(FileSystemEventHandler):
             return
         filepath = event.src_path
 
-        # Wait to ensure file is fully written
-        time.sleep(5)
+        # Wait to ensure file is fully written, use configured seconds
+        time.sleep(seconds)
 
         window_title = get_active_window_title()
         folder_name = sanitize_folder_name(window_title) if window_title else "Desktop"
@@ -97,7 +105,7 @@ if __name__ == "__main__":
     print(f"Watching {OBS_CLIPS_DIR} for new clips...")
     try:
         while True:
-            time.sleep(5)
+            time.sleep(seconds)
     except KeyboardInterrupt:
         observer.stop()
     observer.join()
